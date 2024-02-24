@@ -62,10 +62,11 @@ def register(request):
             return render(request, "auctions/register.html", {
                 "message": "Username already taken."
             })
-        login(request, user)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return HttpResponseRedirect(reverse("auctions:index"))
     else:
         return render(request, "auctions/register.html")
+
 
 @login_required(login_url="/negado")
 def pag1(request):
@@ -74,10 +75,7 @@ def pag1(request):
 def negado(request):
     return render(request, "auctions/negado.html")
 
-
-
 def parcial(request):
-
     if not request.user.is_authenticated:
         mensaje = "no estas autentificado, ELEMENTO NEGADO"
     else:
@@ -94,6 +92,9 @@ def parcial(request):
 class Gruposform(forms.Form):
     nombre = forms.CharField(max_length=64)
 
+
+   
+
 def ver(request):
     if request.method == "POST":
         form = Gruposform(request.POST)
@@ -101,11 +102,8 @@ def ver(request):
             # Finding the passenger id from the submitted form data
 
             nombre = form.cleaned_data["nombre"]
-
             usuario_actual=User.objects.get(pk=request.user.id)
-
             instancia_grupo= Grupo.objects.create(nombre=nombre, creador =usuario_actual)
-
 
             grupo_permisos_creador = Group.objects.create(name=f"creador_{instancia_grupo.id}")
             assign_perm('view_grupo', grupo_permisos_creador, instancia_grupo)
@@ -116,7 +114,6 @@ def ver(request):
 
             grupo_permisos_miembro = Group.objects.create(name=f"miembros_{instancia_grupo.id}")
             assign_perm('view_grupo', grupo_permisos_miembro, instancia_grupo)
- 
 
         # Redirect user to flight page
         return HttpResponseRedirect(reverse("auctions:ver"))
@@ -129,6 +126,7 @@ def ver(request):
         "form": form,
         "actual":request.user
     })
+
 
 
 
@@ -150,7 +148,6 @@ def ver_grupo(request, grupo_id):
     grupo = Grupo.objects.get(pk=grupo_id)
     miembros = grupo.miembro.all()
     archivos = Archivos.objects.all()
-
 
     if request.user.has_perm('auctions.change_grupo', grupo) and request.method == "POST":
         form = Mienbrosform(request.POST)

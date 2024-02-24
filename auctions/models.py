@@ -2,12 +2,13 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+
 class User(AbstractUser):
     pass
 
 
 class Grupo(models.Model):
-    nombre = models.CharField(max_length=64)
+    nombre = models.CharField(max_length=64, unique=True)
     creador = models.ForeignKey(User, on_delete=models.CASCADE, related_name="grupos_creados")
     miembro= models.ManyToManyField(User, blank=True, related_name="grupos" )
 
