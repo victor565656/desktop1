@@ -6,10 +6,10 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import User, Grupo, Archivos
 from django import forms
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 from django.http import FileResponse
+
 
 
 def index(request):
@@ -18,7 +18,6 @@ def index(request):
 
 def login_view(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
@@ -62,12 +61,14 @@ def register(request):
             return render(request, "auctions/register.html", {
                 "message": "Username already taken."
             })
+        # Se especifico el backend, debido a django-guardian ahora hay 2 en settings
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return HttpResponseRedirect(reverse("auctions:index"))
     else:
         return render(request, "auctions/register.html")
 
 
+#probando el decorador login_required
 @login_required(login_url="/negado")
 def pag1(request):
     return render(request, "auctions/pag1.html")
@@ -89,20 +90,26 @@ def parcial(request):
 
 
 
+
 class Gruposform(forms.Form):
     nombre = forms.CharField(max_length=64)
 
-
-   
-
 def ver(request):
+    return render(request, "auctions/ver.html",{
+        "usuarios": User.objects.all(),
+        "grupos": Grupo.objects.all(),
+        "form": Gruposform(),
+        "actual":request.user
+    })
+
+
+def crear_grupo(request):
     if request.method == "POST":
         form = Gruposform(request.POST)
         if form.is_valid():
             # Finding the passenger id from the submitted form data
-
             nombre = form.cleaned_data["nombre"]
-            usuario_actual=User.objects.get(pk=request.user.id)
+            usuario_actual=request.user
             instancia_grupo= Grupo.objects.create(nombre=nombre, creador =usuario_actual)
 
             grupo_permisos_creador = Group.objects.create(name=f"creador_{instancia_grupo.id}")
@@ -117,17 +124,6 @@ def ver(request):
 
         # Redirect user to flight page
         return HttpResponseRedirect(reverse("auctions:ver"))
-    else:
-        form = Gruposform()
-
-    return render(request, "auctions/ver.html",{
-        "usuarios": User.objects.all(),
-        "grupos": Grupo.objects.all(),
-        "form": form,
-        "actual":request.user
-    })
-
-
 
 
 
@@ -144,16 +140,26 @@ class Archivosform(forms.Form):
 
 
 def ver_grupo(request, grupo_id):
-
     grupo = Grupo.objects.get(pk=grupo_id)
-    miembros = grupo.miembro.all()
-    archivos = Archivos.objects.all()
+    
+    if request.user.has_perm('auctions.view_grupo', grupo):
+        return render(request, "auctions/ver_grupo.html",{
+            "form": Mienbrosform(),
+            "form2": Archivosform(),
+            "grupo":grupo,
+            "miembros": grupo.miembro.all(),
+            "archivos": Archivos.objects.filter(grupo=grupo),
+        })
 
+
+def agregar_miembro(request,grupo_id):
+    grupo = Grupo.objects.get(pk=grupo_id)
+ 
     if request.user.has_perm('auctions.change_grupo', grupo) and request.method == "POST":
         form = Mienbrosform(request.POST)
+
         if form.is_valid():
             # Finding the passenger id from the submitted form data
-
             usuario_id = form.cleaned_data["usuario"]
             usuario= User.objects.get(pk=usuario_id)
             grupo.miembro.add(usuario)
@@ -163,18 +169,6 @@ def ver_grupo(request, grupo_id):
 
         # Redirect user to flight page
         return HttpResponseRedirect(reverse("auctions:ver_grupo", args=(grupo_id,)))
-    else:
-        form = Mienbrosform()
-        form2 = Archivosform()
-
-    if request.user.has_perm('auctions.view_grupo', grupo):
-        return render(request, "auctions/ver_grupo.html",{
-            "form": form,
-            "grupo":grupo,
-            "miembros": miembros,
-            "archivos":archivos,
-            "form2": form2,
-        })
 
 
 
@@ -184,8 +178,8 @@ def ver_grupo(request, grupo_id):
 def archivos(request, grupo_id):
     if request.method == "POST":
         form2 = Archivosform(request.POST, request.FILES)
+
         if form2.is_valid():
-            
             nombre = form2.cleaned_data["nombre"]
             archivo = form2.cleaned_data["archivo"]
             grupo= Grupo.objects.get(pk=grupo_id)
@@ -193,7 +187,6 @@ def archivos(request, grupo_id):
             
             return HttpResponseRedirect(reverse("auctions:ver_grupo", args=(grupo_id,)))
  
-
 
 # para descargar archivos, recuerda dejar el link en el template con el url, NO agregar "download" en el link
 def download(request, id):

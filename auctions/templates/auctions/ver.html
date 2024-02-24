@@ -27,7 +27,7 @@
     <br>
 
     agregar grupo
-    <form action="{% url 'auctions:ver'%}"  method="post">
+    <form action="{% url 'auctions:crear_grupo'%}"  method="post">
         {% csrf_token %}
         {{ form }}
         
