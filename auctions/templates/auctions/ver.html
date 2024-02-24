@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>VER USUARIOS Y GRUPOS</h2>
+
+
+    <ul>
+        {% for usuario in usuarios %}
+            <li>id del usuario {{ usuario.id }}: {{ usuario.name}} {{ usuario.email }} </li>
+        {% empty%}
+            <p>No hay usuarios</p>
+        {% endfor %}
+    </ul>
+
+    <ul>
+       
+        {% for grupo in grupos %}
+            <a href="{% url 'auctions:ver_grupo' grupo.id %}"> <li>id del grupo {{ grupo.id }}  {{ grupo.nombre }} {{ grupo.creador }}</li> </a>
+        {% empty%}
+            <p>No hay grupos</p>
+        {% endfor %}
+    </ul>
+    <br>
+    
+    {{actual}}
+
+    <br>
+
+    agregar grupo
+    <form action="{% url 'auctions:ver'%}"  method="post">
+        {% csrf_token %}
+        {{ form }}
+        
+        <input type="submit" value="agregar">
+    </form>
+
+
+
+
+    <a href="{%  url 'auctions:index'  %}">ir a pag1</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <a href="{%  url 'auctions:pag1'  %}">ir a pag1</a>
+    <BR></BR>
+    <a href="{%  url 'auctions:parcial'  %}">ir a Parcial</a>
+    <BR></BR>
+    <a href="{%  url 'auctions:ver'  %}">ir a VER grupos</a>
+{% endblock %}

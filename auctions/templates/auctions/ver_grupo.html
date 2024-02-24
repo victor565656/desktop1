@@ -1,0 +1,53 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Ver grupo</h2>
+
+    id del grupo {{ grupo.id }}  {{ grupo.nombre }} {{ grupo.creador }}
+
+
+    <ul>
+        {% for miembro in miembros %}
+            <li>id del miembro {{ miembro.id }}: {{ miembro.name}} {{ miembro.email }} </li>
+        {% empty%}
+            <p>No hay miembros</p>
+        {% endfor %}
+    </ul>
+
+    <br>
+
+    agregar miembro al grupo
+    <form action="{% url 'auctions:ver_grupo' grupo.id %}"  method="post">
+        {% csrf_token %}
+        {{ form }}
+        
+        <input type="submit" value="agregar miembro">
+    </form>
+
+    <br>
+
+
+
+    <h1>Archivos:</h1>
+    <ul>
+        {% for archivo in archivos %}
+            <li>archivo {{ archivo.id }}: {{ archivo.nombre}} <a href="{% url 'auctions:download'  archivo.id %}" >{{ archivo.archivo.path}}</a> </li>
+        {% empty%}
+            <p>No hay archivos</p>
+        {% endfor %}
+    </ul>
+
+    <br>
+
+    Agregar archivo
+    <form action="{% url 'auctions:archivos'  grupo.id %}" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form2 }}
+        
+        <input type="submit" value="agregar archivo">
+    </form>
+
+    <br>
+
+    <a href="{%  url 'auctions:ver'  %}">ir a ver</a>
+{% endblock %}
