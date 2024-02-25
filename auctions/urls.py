@@ -17,6 +17,8 @@ urlpatterns = [
     path("ver", views.ver, name="ver"),
     path("crear_grupo", views.crear_grupo, name="crear_grupo"),
 
+    path("ver_usuario/<str:usuario_id>", views.ver_usuario, name="ver_usuario"),
+
     #ver grupo especifico y agregar miembros
     path('ver_grupo/<str:grupo_id>', views.ver_grupo, name="ver_grupo"),
     path('agregar_miembro/<str:grupo_id>', views.agregar_miembro, name="agregar_miembro"),
@@ -24,5 +26,5 @@ urlpatterns = [
     #subir y bajar archivos en grupo especifico
     path('archivos/<str:grupo_id>', views.archivos, name="archivos"),
     path("download/<str:id>", views.download, name="download"),
-    path("borrar_archivo/<str:grupo_id>/<str:archivo_id>", views.borrar_archivo, name="borrar_archivo"),
+    path("borrar_archivo/<str:archivo_id>", views.borrar_archivo, name="borrar_archivo"),
 ]

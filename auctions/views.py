@@ -128,6 +128,12 @@ def crear_grupo(request):
 
 
 
+def ver_usuario(request,usuario_id):
+    usuario= User.objects.get(pk=usuario_id)
+    return render(request, "auctions/ver_usuario.html",{
+        "usuario": usuario,
+        "archivos":usuario.archivos_de_usuario.all()
+    })
 
 
 
@@ -196,9 +202,9 @@ def download(request, id):
     response = FileResponse(open(filename, 'rb'), as_attachment=True)
     return response
 
-def borrar_archivo(request,grupo_id, archivo_id):
+def borrar_archivo(request, archivo_id):
     obj = Archivos.objects.get(id=archivo_id)
     obj.delete()
-    return HttpResponseRedirect(reverse("auctions:ver_grupo", args=(grupo_id,)))
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 

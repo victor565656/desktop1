@@ -28,11 +28,12 @@ class Archivos(models.Model):
     nombre = models.CharField(max_length=64)
     archivo = models.FileField(upload_to=user_directory_path)
 
+
+#estas 2 funciones para borrar un archivo en la tabla de bases de dato y en la carpeta tambien
 def _delete_file(path):
     # Deletes file from filesystem.
     if os.path.isfile(path):
         os.remove(path)
-
 
 @receiver(pre_delete, sender=Archivos)
 def delete_img_pre_delete_post(sender, instance, *args, **kwargs):

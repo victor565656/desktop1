@@ -38,7 +38,7 @@
     <h1>Archivos:</h1>
     <ul>
         {% for archivo in archivos %}
-            <li>archivo {{ archivo.id }}: {{ archivo.nombre}} <a href="{% url 'auctions:download'  archivo.id %}" >{{ archivo.archivo.path}}</a> // <a href="{% url 'auctions:borrar_archivo' grupo.id archivo.id %}">Borrar</a></li>
+            <li>archivo {{ archivo.id }}: {{ archivo.nombre}} <a href="{% url 'auctions:download'  archivo.id %}" >{{ archivo.archivo.path}}</a> // <a href="{% url 'auctions:borrar_archivo' archivo.id %}">Borrar</a></li>
         {% empty%}
             <p>No hay archivos</p>
         {% endfor %}

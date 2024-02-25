@@ -1,0 +1,27 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+    <h2>USUARIO</h2>
+
+    id del usuario {{ usuario.id }}  {{ usuario.name }} {{ usuario.email }}
+
+    <br>
+
+    <h1>Archivos del usuario:</h1>
+    <ul>
+        {% for archivo in archivos %}
+            <li>archivo {{ archivo.id }}: {{ archivo.nombre}} <a href="{% url 'auctions:download'  archivo.id %}" >{{ archivo.archivo.path}}</a> // <a href="{% url 'auctions:borrar_archivo' archivo.id %}">Borrar</a>
+        {% empty%}
+            <p>No hay archivos</p>
+        {% endfor %}
+    </ul>
+
+
+
+    <br>
+    <hr>
+    
+
+    <a href="{%  url 'auctions:ver'  %}">ir a ver</a>
+{% endblock %}

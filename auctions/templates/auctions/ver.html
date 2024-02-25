@@ -1,12 +1,12 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>VER USUARIOS Y GRUPOS</h2>
+    <h2>USUARIOS</h2>
 
 
     <ul>
         {% for usuario in usuarios %}
-            <li>id del usuario {{ usuario.id }}: {{ usuario.name}} {{ usuario.email }} </li>
+            <li> <a href="{% url 'auctions:ver_usuario' usuario.id %}"> id del usuario {{ usuario.id }}: {{ usuario.name}} {{ usuario.email }} </a></li>
         {% empty%}
             <p>No hay usuarios</p>
         {% endfor %}
@@ -14,6 +14,8 @@
 
     <br>
     <hr>
+
+    <h2>GRUPOS</h2>
 
     <ul>
        
