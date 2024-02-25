@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Grupo, Archivos
 from django import forms
 from django.contrib.auth.models import Group
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, get_objects_for_user
 from django.http import FileResponse
+
 
 
 
@@ -33,7 +34,6 @@ def login_view(request):
             })
     else:
         return render(request, "auctions/login.html")
-
 
 def logout_view(request):
     logout(request)
@@ -69,7 +69,7 @@ def register(request):
 
 
 #probando el decorador login_required
-@login_required(login_url="/negado")
+@login_required(login_url="auctions:negado")
 def pag1(request):
     return render(request, "auctions/pag1.html")
 
@@ -95,9 +95,10 @@ class Gruposform(forms.Form):
     nombre = forms.CharField(max_length=64)
 
 def ver(request):
+    grupos_disponibles = get_objects_for_user(request.user, 'auctions.view_grupo')
     return render(request, "auctions/ver.html",{
         "usuarios": User.objects.all(),
-        "grupos": Grupo.objects.all(),
+        "grupos": grupos_disponibles,
         "form": Gruposform(),
         "actual":request.user
     })
@@ -195,5 +196,9 @@ def download(request, id):
     response = FileResponse(open(filename, 'rb'), as_attachment=True)
     return response
 
+def borrar_archivo(request,grupo_id, archivo_id):
+    obj = Archivos.objects.get(id=archivo_id)
+    obj.delete()
+    return HttpResponseRedirect(reverse("auctions:ver_grupo", args=(grupo_id,)))
 
 

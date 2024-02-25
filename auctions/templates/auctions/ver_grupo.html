@@ -1,5 +1,6 @@
 {% extends "auctions/layout.html" %}
 
+
 {% block body %}
     <h2>Ver grupo</h2>
 
@@ -15,23 +16,29 @@
     </ul>
 
     <br>
-
-    agregar miembro al grupo
-    <form action="{% url 'auctions:agregar_miembro' grupo.id %}"  method="post">
-        {% csrf_token %}
-        {{ form }}
-        
-        <input type="submit" value="agregar miembro">
-    </form>
+    {% load guardian_tags %}
+    {% get_obj_perms request.user for grupo as "grupo_perms" %}
+    
+    {% if "change_grupo" in grupo_perms %}
+        Agregar miembro al grupo
+        <form action="{% url 'auctions:agregar_miembro' grupo.id %}"  method="post">
+            {% csrf_token %}
+            {{ form }}
+            
+            <input type="submit" value="agregar miembro">
+        </form>
+    {% endif %}
+    
 
     <br>
+    <hr>
 
 
 
     <h1>Archivos:</h1>
     <ul>
         {% for archivo in archivos %}
-            <li>archivo {{ archivo.id }}: {{ archivo.nombre}} <a href="{% url 'auctions:download'  archivo.id %}" >{{ archivo.archivo.path}}</a> </li>
+            <li>archivo {{ archivo.id }}: {{ archivo.nombre}} <a href="{% url 'auctions:download'  archivo.id %}" >{{ archivo.archivo.path}}</a> // <a href="{% url 'auctions:borrar_archivo' grupo.id archivo.id %}">Borrar</a></li>
         {% empty%}
             <p>No hay archivos</p>
         {% endfor %}

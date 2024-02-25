@@ -24,4 +24,5 @@ urlpatterns = [
     #subir y bajar archivos en grupo especifico
     path('archivos/<str:grupo_id>', views.archivos, name="archivos"),
     path("download/<str:id>", views.download, name="download"),
+    path("borrar_archivo/<str:grupo_id>/<str:archivo_id>", views.borrar_archivo, name="borrar_archivo"),
 ]
